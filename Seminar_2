@@ -1,0 +1,238 @@
+//        Написать стэковый калькулятор, который принимает в качестве аргумента командой строки имя
+//        файла содержащего команды. Если нет аргумента то использовать стандартный ввод для чтения
+//        команд. Использовать вещественные числа.
+//        Реализовать следующий набор команд:
+//        • # - строка комментарий
+//        • POP, PUSH — работа со стэком
+//        • Арифметические операции + , - , * , /, sqrt. Используют один или два верхних элемента
+//        стека, изымают их из стека, помещая результат назад
+//        • PRINT — печать верхнего элемента стека (без удаления из стека)
+//        • DEFINE — задать значение параметра. В дальнейшем везде использовать вместо
+//        параметра это значение. Например:
+//        DEFINE a 4
+//        PUSH a
+//        SQRT
+//        PRINT
+//        Должно вывести 2
+
+
+
+// Интерфейс Command
+
+package com.jcourse.shashkova.calculator;
+
+import java.util.Map;
+import java.util.Stack;
+
+public interface Command {
+    void execute (Stack<Double> stack, Map<String, Double> define, String[] s);
+}
+
+
+
+// Класс Main
+
+package com.jcourse.shashkova.calculator;
+
+import com.jcourse.shashkova.calculator.command.*;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Stack;
+
+public class Main {
+    public static void main(String args[]) {
+        Stack<Double> stack = new Stack<Double>();
+        Map<String, Double> vars = new HashMap<String, Double>();
+        Map<String, Command> allCommands = new HashMap<String, Command>();
+        allCommands.put("push", new Push());
+        allCommands.put("pop", new Pop());
+        allCommands.put("sum", new Sum());
+        allCommands.put("minus", new Minus());
+        allCommands.put("div", new Div());
+        allCommands.put("mult", new Mult());
+        allCommands.put("sqrt", new Sqrt());
+        allCommands.put("print", new Print());
+        Scanner sc = new Scanner(System.in);
+        String s;
+
+        System.out.println("Введите команды (для выхода используйте exit):");
+        for (int i = 0; i < 100; i++) {    //for потом можно заменить на while do
+            s = sc.nextLine().toLowerCase();
+            if (s.equals("exit")) {
+                break;
+            }
+            if (s.length() == 0) {
+                System.out.println("Введена пустая строка");
+                continue;
+            }
+
+            String str[] = s.split(" ");
+
+            if (stack.size()==0 && !(str[0]).equals("push")) {
+                System.out.println("Стек пуст. Наполните его, используя команду push");
+                continue;}
+
+            if (allCommands.containsKey(str[0])) {
+                Command cmd = allCommands.get(str[0]);
+                cmd.execute(stack, vars, str);
+            } else {
+                System.out.println("Команды нет среди списка разрешенных, введите следующую:");
+                continue;
+            }
+            if (!(str[0]).equals("push")&&!(str[0]).equals("print")&&!(str[0]).equals("pop"))
+            {
+                System.out.println("Результат операции "+stack.peek());
+                continue;
+            }
+        }
+    }
+}
+
+
+
+// Класс Div
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class Div implements Command {
+
+    public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
+        if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
+        else { stack.push(stack.pop()/stack.pop()); }
+    }
+}
+
+
+
+// Класс Minus
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class Minus implements Command {
+
+    public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
+        if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
+        else { stack.push(stack.pop() - stack.pop()); }
+    }
+}
+
+
+
+// Класс Mult
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class Mult implements Command {
+
+    public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
+        if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
+        else { stack.push(stack.pop()*stack.pop()); }
+    }
+}
+
+
+
+// Класс Pop
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.Map;
+import java.util.Stack;
+
+public class Pop implements Command {
+    public void execute(Stack<Double> stack, Map<String, Double> define, String[] s) {
+        if (stack.size() == 1) {System.out.println("Последний элемент стека "+stack.peek()+" не изымается");}
+        else { stack.pop();
+          System.out.println("Вершина стека "+stack.peek());}
+    }
+}
+
+
+
+// Класс Print
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.Map;
+import java.util.Stack;
+
+public class Print implements Command {
+    public void execute(Stack<Double> stack, Map<String, Double> define, String[] s) {
+        System.out.println(stack.peek());
+        }
+    }
+
+
+
+// Класс Push 
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class Push implements Command {
+
+    public void execute (Stack<Double> stack, Map<String, Double> define, String[] s){
+        //прописать проверку, что приходит в define
+        stack.push(Double.valueOf(s[1]));
+    }
+}
+
+
+
+// Класс Sqrt
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.Map;
+import java.util.Stack;
+
+
+public class Sqrt implements Command {
+    public void execute(Stack<Double> stack, Map<String, Double> define, String[] s) {
+        stack.push(Math.sqrt(stack.peek())); //округление добавить
+    }
+}
+
+
+
+// Класс Sum
+
+package com.jcourse.shashkova.calculator.command;
+
+import com.jcourse.shashkova.calculator.Command;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Stack;
+
+public class Sum implements Command {
+
+    public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
+            if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
+                 else { stack.push(stack.pop() + stack.pop()); }
+        }
+    }
