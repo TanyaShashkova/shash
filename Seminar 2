@@ -16,6 +16,7 @@
 //        Должно вывести 2
 
 
+
 // Интерфейс Command
 
 package com.jcourse.shashkova.calculator;
@@ -141,7 +142,7 @@ import java.util.Stack;
 public class Mult implements Command {
 
     public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
-        if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся break в основной программе
+        if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
         else { stack.push(stack.pop()*stack.pop()); }
     }
 }
@@ -231,7 +232,7 @@ import java.util.Stack;
 public class Sum implements Command {
 
     public void execute (Stack<Double> stack, Map<String, Double> define, String[] s) {
-            if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся break в основной программе
+            if (stack.size()==1) { System.out.println("Невозможно выполнить команду. Стек содержит только один элемент: "+stack.peek());} //как сделать чтобы при этом выполнялся continue в основной программе
                  else { stack.push(stack.pop() + stack.pop()); }
         }
     }
